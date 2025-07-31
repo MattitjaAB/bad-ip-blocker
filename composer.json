@@ -2,6 +2,7 @@
     "name": "mattitjaab/bad-ip-blocker",
     "description": "Block IPs based on a remote JSON file.",
     "type": "library",
+    "license": "MIT",
     "autoload": {
         "psr-4": {
             "Mattitja\\BadIpBlocker\\": "src/"
