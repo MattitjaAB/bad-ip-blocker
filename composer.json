@@ -1,0 +1,27 @@
+{
+    "name": "mattitjaab/bad-ip-blocker",
+    "description": "Block IPs based on a remote JSON file.",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Mattitja\\BadIpBlocker\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Mattitja\\BadIpBlocker\\BadIpBlockerServiceProvider"
+            ]
+        }
+    },
+    "authors": [
+        {
+            "name": "Mattitja AB",
+            "email": "hej@mattitja.se"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "illuminate/support": "^12.0"
+    }
+}
