@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 class CheckBadIps
 {
     protected string $source = 'https://bad-ip.mattitja.cloud/api/json';
+
     protected string $cachePath = 'bad_ips.json';
 
     public function handle(Request $request, Closure $next)
@@ -31,6 +32,7 @@ class CheckBadIps
         }
 
         $data = json_decode(file_get_contents($fullPath), true);
+
         return $data['ips'] ?? [];
     }
 
