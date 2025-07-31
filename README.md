@@ -14,7 +14,7 @@ This package fetches a list of bad IPs from a remote API hosted by [Mattitja AB]
 ## Installation
 
 ```bash
-composer require mattitja/bad-ip-blocker
+composer require mattitjaab/bad-ip-blocker
 ```
 
 ## Usage
