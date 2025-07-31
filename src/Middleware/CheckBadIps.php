@@ -5,6 +5,8 @@ namespace Mattitja\BadIpBlocker\Middleware;
 use Carbon\Carbon;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 
 class CheckBadIps
 {
@@ -26,38 +28,34 @@ class CheckBadIps
 
     protected function getCachedIps(): array
     {
-        $fullPath = storage_path("app/{$this->cachePath}");
+        $data = [];
 
-        $shouldUpdate = true;
+        if (Storage::exists($this->cachePath)) {
+            $data = json_decode(Storage::get($this->cachePath), true);
 
-        if (file_exists($fullPath)) {
-            $data = json_decode(file_get_contents($fullPath), true);
+            $updatedAt = $data['updated_at'] ?? null;
 
-            if (
-                isset($data['updated_at']) &&
-                now()->diffInHours(Carbon::parse($data['updated_at'])) <= 1
-            ) {
-                $shouldUpdate = false;
+            if ($updatedAt && Carbon::parse($updatedAt)->diffInHours() <= 24) {
+                return $data['ips'] ?? [];
             }
         }
 
-        if ($shouldUpdate) {
-            $this->updateCache($fullPath);
-            $data = json_decode(file_get_contents($fullPath), true);
-        }
+        $this->updateCache();
+
+        $data = json_decode(Storage::get($this->cachePath), true);
 
         return $data['ips'] ?? [];
     }
 
-    protected function updateCache(string $path): void
+    protected function updateCache(): void
     {
         try {
-            $json = file_get_contents($this->source);
-            if ($json) {
-                file_put_contents($path, $json);
+            $response = Http::get($this->source);
+
+            if ($response->ok()) {
+                Storage::put($this->cachePath, $response->body());
             }
         } catch (\Throwable $e) {
-            // Silent fail
         }
     }
 }
