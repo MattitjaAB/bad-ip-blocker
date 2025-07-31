@@ -52,7 +52,7 @@ This ensures the middleware runs globally on every incoming request.
 Cached data is stored at:
 
 ```
-storage/app/bad_ips.json
+storage/app/private/bad_ips.json
 ```
 
 Delete this file to force a refresh.
