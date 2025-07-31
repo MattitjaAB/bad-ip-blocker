@@ -2,6 +2,7 @@
 
 namespace Mattitja\BadIpBlocker\Middleware;
 
+use Carbon\Carbon;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -27,11 +28,23 @@ class CheckBadIps
     {
         $fullPath = storage_path("app/{$this->cachePath}");
 
-        if (! file_exists($fullPath) || now()->diffInHours(now()->createFromTimestamp(filemtime($fullPath))) > 1) {
-            $this->updateCache($fullPath);
+        $shouldUpdate = true;
+
+        if (file_exists($fullPath)) {
+            $data = json_decode(file_get_contents($fullPath), true);
+
+            if (
+                isset($data['updated_at']) &&
+                now()->diffInHours(Carbon::parse($data['updated_at'])) <= 1
+            ) {
+                $shouldUpdate = false;
+            }
         }
 
-        $data = json_decode(file_get_contents($fullPath), true);
+        if ($shouldUpdate) {
+            $this->updateCache($fullPath);
+            $data = json_decode(file_get_contents($fullPath), true);
+        }
 
         return $data['ips'] ?? [];
     }
